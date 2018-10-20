@@ -42,13 +42,14 @@ function! DateDiff#Command( Differ, isRangeGiven, startLnum, endLnum, arguments 
     if a:isRangeGiven
 	let [l:date1, l:source1] = [s:ParseDate(getline(l:startLnum))[0], 'line ' . l:startLnum]
 	if l:startLnum == l:endLnum
-	    if empty(a:arguments)
-		let l:date2 = l:now
-	    else
+	    if ! empty(a:arguments)
 		let [l:date2, l:rest] = s:ParseDate(a:arguments)
 		if ! empty(l:rest)
-		    call ingo#err#Set('Must pass only one {date}')
-		    return 0
+		    let [l:date3, l:rest] = s:ParseDate(l:rest)
+		    if s:CheckValidness(l:date3, '')
+			call ingo#err#Set('Must pass only one {date}')
+			return 0
+		    endif
 		endif
 	    endif
 	elseif empty(a:arguments)
