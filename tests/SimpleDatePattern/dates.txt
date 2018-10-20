@@ -1,0 +1,15 @@
+Here's the diary:
+2018-09-17 Started writing.
+2018-09-18 Nothing happened.
+2018-09-20 Went shopping.
+2018-09-21 Just remembered that on 2018-09-18, I really read a lot.
+2018-09-24 Was sick.
+2018-09-25 Feeling better.
+2018-10-01 What happened?
+----------
+2018-10-01 Another entry.
+2018-10-03 Feeling good!
+My 2018-10-05 day was good.
+Nothing on my mind on 2018-10-06
+2018-10-10 Let's stop this.
+EOF
