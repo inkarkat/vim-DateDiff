@@ -41,6 +41,7 @@ if ! exists('g:DateDiff_DatePatterns')
     \   ['\<\([0123]\d\)-\(' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(1) . " " . submatch(4)'],
     \   ['\<\([0123]\d\)-\(' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d\)\>',  '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(1) . " " . submatch(4) . ":00"'],
     \   ['\<\([0123]\d\)-\(' . s:monthsExpr . '\)-\(\d\d\d\d\)\>',  '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(1) . " " . submatch(4)'],
+    \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\),\?\s\+\(\d\d\d\d\)\s\+\([012]\d:[0-5]\d\)\>', '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(1)) . "-" . submatch(2) . " " . submatch(4) . ":00"'],
     \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\),\?\s\+\(\d\d\d\d\)\>', '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(1)) . "-" . submatch(2)'],
     \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\),\?\s\+\([012]\d:[0-5]\d\)\>', '\=ingo#date#strftime("%Y") . "-" . DateDiff#ParseMonth(submatch(1)) . "-" . submatch(2) . " " . submatch(3) . ":00"'],
     \   ['\<\(\d\d\d\d-[01]\d-[0123]\d\)T\([012]\d:[0-5]\d:[0-5]\d\)Z\>', '\1 \2']
