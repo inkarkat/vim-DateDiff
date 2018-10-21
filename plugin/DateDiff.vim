@@ -16,16 +16,25 @@ let g:loaded_DateDiff = 1
 
 "- configuration ---------------------------------------------------------------
 
+if ! exists('g:DateDiff_ShortMonths')
+    let g:DateDiff_ShortMonths = split('Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec', ' ')
+endif
+if ! exists('g:DateDiff_LongMonths')
+    let g:DateDiff_LongMonths = split('January February March April May June July August September October November December', ' ')
+endif
 if ! exists('g:DateDiff_DatePatterns')
-    let s:monthsExpr = '\%(' . join(split('Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec' . ' ' . 'January February March April May June July August September October November December', ' '), '\|') . '\)'
+    let s:monthsExpr = '\%(' . join(g:DateDiff_ShortMonths + g:DateDiff_LongMonths, '\|') . '\)'
 
     let g:DateDiff_DatePatterns = [
     \   ['\<\(\d\d\d\d\)\([01]\d\)\([0123]\d\)[ _-]\([012]\d\)\([0-5]\d\)\([0-5]\d\)\>', '\1-\2-\3 \4:\5:\6'],
     \   ['\<\(\d\d\d\d\)\([01]\d\)\([0123]\d\)[ _-]\([012]\d\)\([0-5]\d\)\>', '\1-\2-\3 \4:\5:00'],
     \   ['\<\(\d\d\d\d\)\([01]\d\)\([0123]\d\)\>', '\1-\2-\3'],
-    \   ['\<\(\d\d\d\d-\%([01]\d\|' . s:monthsExpr . '\)-[0123]\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\1 \2'],
-    \   ['\<\(\d\d\d\d-\%([01]\d\|' . s:monthsExpr . '\)-[0123]\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\1 \2:00'],
-    \   ['\<\(\d\d\d\d-\%([01]\d\|' . s:monthsExpr . '\)-[0123]\d\)\>', '&'],
+    \   ['\<\(\d\d\d\d-[01]\d-[0123]\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\1 \2'],
+    \   ['\<\(\d\d\d\d-[01]\d-[0123]\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\1 \2:00'],
+    \   ['\<\(\d\d\d\d-[01]\d-[0123]\d\)\>', '&'],
+    \   ['\<\(\d\d\d\d\)-\(' . s:monthsExpr . '\)-\([0123]\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\=submatch(1) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(3) . " " . submatch(4)'],
+    \   ['\<\(\d\d\d\d\)-\(' . s:monthsExpr . '\)-\([0123]\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\=submatch(1) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(3) . " " . submatch(4) . ":00"'],
+    \   ['\<\(\d\d\d\d\)-\(' . s:monthsExpr . '\)-\([0123]\d\)\>', '\=submatch(1) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(3)'],
     \   ['\<\([0123]\d\)-\([01]\d\|' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\3-\2-\1 \4'],
     \   ['\<\([0123]\d\)-\([01]\d\|' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\3-\2-\1 \4:00'],
     \   ['\<\([0123]\d\)-\([01]\d\|' . s:monthsExpr . '\)-\(\d\d\d\d\)\>', '\3-\2-\1'],

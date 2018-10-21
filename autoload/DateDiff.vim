@@ -8,6 +8,20 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
+function! DateDiff#ParseMonth( month )
+    let l:i = index(g:DateDiff_ShortMonths, a:month)
+    if l:i != -1
+	return l:i + 1
+    endif
+
+    let l:i = index(g:DateDiff_LongMonths, a:month)
+    if l:i != -1
+	return l:i + 1
+    endif
+
+    throw 'DateDiff: No match'
+endfunction
+
 function! s:ParseDate( text )
     for [l:datePattern, l:dateReplacement] in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
 	" Don't use matchlist() here to obtain both date and rest in one pass, as it
@@ -21,12 +35,16 @@ function! s:ParseDate( text )
 
 	let l:dateString = strpart(a:text, l:start, (l:end - l:start))
 	let l:rest = strpart(a:text, l:end)
-	let l:convertedDateString = substitute(l:dateString, l:datePattern, l:dateReplacement, '')
-	let l:date = ingo#date#epoch#ConvertTo(l:convertedDateString)
+	try
+	    let l:convertedDateString = substitute(l:dateString, l:datePattern, l:dateReplacement, '')
+	    let l:date = ingo#date#epoch#ConvertTo(l:convertedDateString)
 
-	if l:date > 0
-	    return [l:date, l:rest]
-	endif
+	    if l:date > 0
+		return [l:date, l:rest]
+	    endif
+	catch /^DateDiff:/
+	    continue
+	endtry
     endfor
     return [a:text, '']
 endfunction
