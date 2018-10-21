@@ -9,7 +9,7 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
 function! s:ParseDate( text )
-    for l:datePattern in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
+    for [l:datePattern, l:dateReplacement] in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
 	" Don't use matchlist() here to obtain both date and rest in one pass, as it
 	" would require adding capture groups, and we don't want to assume anything
 	" about the configured (possibly already quite complex) regular expression.
@@ -21,7 +21,8 @@ function! s:ParseDate( text )
 
 	let l:dateString = strpart(a:text, l:start, (l:end - l:start))
 	let l:rest = strpart(a:text, l:end)
-	let l:date = ingo#date#epoch#ConvertTo(l:dateString)
+	let l:convertedDateString = substitute(l:dateString, l:datePattern, l:dateReplacement, '')
+	let l:date = ingo#date#epoch#ConvertTo(l:convertedDateString)
 
 	if l:date > 0
 	    return [l:date, l:rest]
