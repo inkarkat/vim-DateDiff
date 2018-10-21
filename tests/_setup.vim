@@ -1,4 +1,5 @@
 let g:IngoLibrary_NowEpoch = 1540031418
+let g:IngoLibrary_StrftimeEmulation = {'%Y': '2018'}
 call vimtest#AddDependency('vim-ingo-library')
 
 runtime plugin/DateDiff.vim
