@@ -20,9 +20,9 @@ if ! exists('g:DateDiff_DatePattern')
     let s:monthsExpr = '\%(' . join(split('Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec' . ' ' . 'January February March April May June July August September October November December', ' '), '\|') . '\)'
 
     let g:DateDiff_DatePattern = join([
-    \   '\<\d\d\d\d[01]\d[0123]\d-\%( [012]\d[0-5]\d\%(\d\d\)\?\)\?\>',
-    \   '\<\d\d\d\d-\%([01]\d\|' . s:monthsExpr . '\)-[0123]\d-\%( [012]\d:[0-5]\d\%(:[0-5]\d\)\?\)\?\>',
-    \   '\<[0123]\d-\%([01]\d\|' . s:monthsExpr . '\)-\d\d\d\d\%( [012]\d:[0-5]\d\%(:[0-5]\d\)\?\)\?\>',
+    \   '\<\d\d\d\d[01]\d[0123]\d\%([ _-][012]\d[0-5]\d\%(\d\d\)\?\)\?\>',
+    \   '\<\d\d\d\d-\%([01]\d\|' . s:monthsExpr . '\)-[0123]\d\%([ _-][012]\d:[0-5]\d\%(:[0-5]\d\)\?\)\?\>',
+    \   '\<[0123]\d-\%([01]\d\|' . s:monthsExpr . '\)-\d\d\d\d\%([ _-][012]\d:[0-5]\d\%(:[0-5]\d\)\?\)\?\>',
     \   '\<' . s:monthsExpr . '\s\+[0123]\?\d\s\+\(\d\d\d\d\|[012]\d:[0-5]\d\)\>',
     \   '\<\d\d\d\d-[01]\d-[0123]\dT[012]\d:[0-5]\d:[0-5]\dZ\>'
     \], '\|')
