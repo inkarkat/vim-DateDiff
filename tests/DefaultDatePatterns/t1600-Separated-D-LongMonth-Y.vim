@@ -1,4 +1,4 @@
-" Test parsing of dates comprised of long month names and separators.
+" Test parsing of dates comprised of day, long month names, year and separators.
 
 call vimtest#StartTap()
 call vimtap#Plan(10)
