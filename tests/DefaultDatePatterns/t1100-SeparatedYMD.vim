@@ -1,4 +1,4 @@
-" Test parsing of dates comprised of numbers and separators.
+" Test parsing of dates comprised of YMD numbers and separators.
 
 call vimtest#StartTap()
 call vimtap#Plan(10)
