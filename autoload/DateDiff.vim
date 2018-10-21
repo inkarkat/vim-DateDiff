@@ -9,22 +9,25 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
 function! s:ParseDate( text )
-    let l:datePattern = ingo#plugin#setting#GetBufferLocal('DateDiff_DatePattern')
+    for l:datePattern in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
+	" Don't use matchlist() here to obtain both date and rest in one pass, as it
+	" would require adding capture groups, and we don't want to assume anything
+	" about the configured (possibly already quite complex) regular expression.
+	let l:start = match(a:text, l:datePattern)
+	if l:start == -1
+	    continue
+	endif
+	let l:end = matchend(a:text, l:datePattern)
 
-    " Don't use matchlist() here to obtain both date and rest in one pass, as it
-    " would require adding capture groups, and we don't want to assume anything
-    " about the configured (possibly already quite complex) regular expression.
-    let l:start = match(a:text, l:datePattern)
-    if l:start == -1
-	return [a:text, '']
-    endif
-    let l:end = matchend(a:text, l:datePattern)
+	let l:dateString = strpart(a:text, l:start, (l:end - l:start))
+	let l:rest = strpart(a:text, l:end)
+	let l:date = ingo#date#epoch#ConvertTo(l:dateString)
 
-    let l:dateString = strpart(a:text, l:start, (l:end - l:start))
-    let l:rest = strpart(a:text, l:end)
-    let l:date = ingo#date#epoch#ConvertTo(l:dateString)
-
-    return [(l:date > 0 ? l:date : l:dateString), l:rest]
+	if l:date > 0
+	    return [l:date, l:rest]
+	endif
+    endfor
+    return [a:text, '']
 endfunction
 function! s:CheckValidness( date, source )
     if empty(a:date)
