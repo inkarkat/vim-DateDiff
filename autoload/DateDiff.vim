@@ -9,15 +9,11 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
 function! DateDiff#ParseMonth( month )
-    let l:i = index(g:DateDiff_ShortMonths, a:month)
-    if l:i != -1
-	return l:i + 1
-    endif
-
-    let l:i = index(g:DateDiff_LongMonths, a:month)
-    if l:i != -1
-	return l:i + 1
-    endif
+    for l:i in [index(g:DateDiff_ShortMonths, a:month), index(g:DateDiff_LongMonths, a:month)]
+	if l:i != -1
+	    return printf('%02d', l:i + 1)
+	endif
+    endfor
 
     throw 'DateDiff: No match'
 endfunction
