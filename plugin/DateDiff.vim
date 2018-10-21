@@ -35,11 +35,14 @@ if ! exists('g:DateDiff_DatePatterns')
     \   ['\<\(\d\d\d\d\)-\(' . s:monthsExpr . '\)-\([0123]\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\=submatch(1) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(3) . " " . submatch(4)'],
     \   ['\<\(\d\d\d\d\)-\(' . s:monthsExpr . '\)-\([0123]\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\=submatch(1) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(3) . " " . submatch(4) . ":00"'],
     \   ['\<\(\d\d\d\d\)-\(' . s:monthsExpr . '\)-\([0123]\d\)\>', '\=submatch(1) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(3)'],
-    \   ['\<\([0123]\d\)-\([01]\d\|' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\3-\2-\1 \4'],
-    \   ['\<\([0123]\d\)-\([01]\d\|' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\3-\2-\1 \4:00'],
-    \   ['\<\([0123]\d\)-\([01]\d\|' . s:monthsExpr . '\)-\(\d\d\d\d\)\>', '\3-\2-\1'],
-    \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\)\s\+\(\d\d\d\d\)\>', '\3-\1-\2'],
-    \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\)\s\+\([012]\d:[0-5]\d\)\>', '\=strftime("%Y") . "-" . submatch(1) . "-" . submatch(2) . " " . submatch(3) . ":00"'],
+    \   ['\<\([0123]\d\)-\([01]\d\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\3-\2-\1 \4'],
+    \   ['\<\([0123]\d\)-\([01]\d\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d\)\>', '\3-\2-\1 \4:00'],
+    \   ['\<\([0123]\d\)-\([01]\d\)-\(\d\d\d\d\)\>', '\3-\2-\1'],
+    \   ['\<\([0123]\d\)-\(' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d:[0-5]\d\)\>', '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(1) . " " . submatch(4)'],
+    \   ['\<\([0123]\d\)-\(' . s:monthsExpr . '\)-\(\d\d\d\d\)[ _-]\([012]\d:[0-5]\d\)\>',  '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(1) . " " . submatch(4) . ":00"'],
+    \   ['\<\([0123]\d\)-\(' . s:monthsExpr . '\)-\(\d\d\d\d\)\>',  '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(2)) . "-" . submatch(1) . " " . submatch(4)'],
+    \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\),\?\s\+\(\d\d\d\d\)\>', '\=submatch(3) . "-" . DateDiff#ParseMonth(submatch(1)) . "-" . submatch(2)'],
+    \   ['\<\(' . s:monthsExpr . '\)\s\+\([0123]\?\d\),\?\s\+\([012]\d:[0-5]\d\)\>', '\=strftime("%Y") . "-" . DateDiff#ParseMonth(submatch(1)) . "-" . submatch(2) . " " . submatch(3) . ":00"'],
     \   ['\<\(\d\d\d\d-[01]\d-[0123]\d\)T\([012]\d:[0-5]\d:[0-5]\d\)Z\>', '\1 \2']
     \]
     unlet s:monthsExpr
