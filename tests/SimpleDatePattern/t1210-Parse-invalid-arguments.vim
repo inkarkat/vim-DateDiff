@@ -5,13 +5,8 @@ edit dates.txt
 call vimtest#StartTap()
 call vimtap#Plan(3)
 
-2DateDiff doesNotExist
-call vimtap#Is(ingo#err#Get(), 'Not a valid date from arguments: doesNotExist', 'bad argument')
-
-2DateDiff 2018-10-17 2018-10-18
-call vimtap#Is(ingo#err#Get(), 'Must pass only one {date}', 'two date arguments')
-
-2DateDiff 2018-10-17 2018-10-18 2018-10-19
-call vimtap#Is(ingo#err#Get(), 'Must pass only one {date}', 'three date arguments')
+call vimtap#err#Errors('Not a valid date from arguments: doesNotExist', '2DateDiff doesNotExist', 'bad argument')
+call vimtap#err#Errors('Must pass only one {date}', '2DateDiff 2018-10-17 2018-10-18', 'two date arguments')
+call vimtap#err#Errors('Must pass only one {date}', '2DateDiff 2018-10-17 2018-10-18 2018-10-19', 'three date arguments')
 
 call vimtest#Quit()

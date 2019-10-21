@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
 "
-" Copyright: (C) 2018 Ingo Karkat
+" Copyright: (C) 2018-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -62,7 +62,9 @@ function! DateDiff#Command( Differ, isRangeGiven, startLnum, endLnum, arguments 
 	if l:startLnum == l:endLnum
 	    if ! empty(a:arguments)
 		let [l:date2, l:rest] = s:ParseDate(a:arguments)
-		if ! empty(l:rest)
+		if ! s:CheckValidness(l:date2, l:source2)
+		    return 0
+		elseif ! empty(l:rest)
 		    let [l:date3, l:rest] = s:ParseDate(l:rest)
 		    if s:CheckValidness(l:date3, '')
 			call ingo#err#Set('Must pass only one {date}')
