@@ -65,12 +65,28 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES					       *DateDiff-dependencies*
 
 - Requires Vim 7.0 or higher.
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.039 or
+  higher.
 
 ==============================================================================
 CONFIGURATION					      *DateDiff-configuration*
 
 For a permanent configuration, put the following commands into your |vimrc|:
-configvar
+			   *b:DateDiff_DatePatterns* *g:DateDiff_DatePatterns*
+The recognized date / time patterns are configured in a List of pairs; the
+first is the regular expression to match the date, the second a replacement
+that allows to reshuffle or convert the date into a format that is understood
+by the system's date command (which is used to convert the date into the
+count of seconds after the epoch; i.e. since 01-Jan-1970). A good format is
+%Y-%m-%d %H:%M:%S. If no conversion is necessary, the replacement '&' uses
+the match as-is. >
+    let g:DateDiff_DatePatterns = [[{pattern}, {replacement}], ...]
+<
+			      *g:DateDiff_ShortMonths* *g:DateDiff_LongMonths*
+In order to convert month names into numbers (January = 1, ...), two Lists of
+months are used. These can be modified to match localized month names.
+
+
 							      *DateDiff-remap*
 plugmap
 ==============================================================================
@@ -100,7 +116,7 @@ First published version.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2018 Ingo Karkat
+Copyright: (C) 2018-2019 Ingo Karkat
 The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
