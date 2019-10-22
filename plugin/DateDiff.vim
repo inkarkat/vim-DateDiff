@@ -3,7 +3,7 @@
 " DEPENDENCIES:
 "   - ingo-library.vim plugin
 "
-" Copyright: (C) 2018 Ingo Karkat
+" Copyright: (C) 2018-2019 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
@@ -50,8 +50,8 @@ if ! exists('g:DateDiff_DatePatterns')
 endif
 
 if ! exists('g:DateDiff_Differ')
-    if v:version < 702 | runtime autoload/DateDiff.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
-    let g:DateDiff_Differ = function('DateDiff#Diff')
+    if v:version < 702 | runtime autoload/FlexibleUnits/DateDiff.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
+    let g:DateDiff_Differ = function('DateDiff#FlexibleUnits#Diff')
 endif
 
 "- commands --------------------------------------------------------------------

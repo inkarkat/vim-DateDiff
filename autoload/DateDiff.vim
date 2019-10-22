@@ -103,8 +103,4 @@ function! DateDiff#Command( Differ, isRangeGiven, startLnum, endLnum, arguments 
     return 1
 endfunction
 
-function! DateDiff#Diff( date1, date2 )
-    return a:date1.' - '.a:date2
-endfunction
-
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
