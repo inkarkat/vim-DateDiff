@@ -78,7 +78,8 @@ first is the regular expression to match the date, the second a replacement
 that allows to reshuffle or convert the date into a format that is understood
 by the system's date command (which is used to convert the date into the
 count of seconds after the epoch; i.e. since 01-Jan-1970). A good format is
-%Y-%m-%d %H:%M:%S. If no conversion is necessary, the replacement '&' uses
+YYYY-mm-dd HH:MM:SS. If you have higher-precision times, you can append
+microseconds as ,µµµ. If no conversion is necessary, the replacement '&' uses
 the match as-is. >
     let g:DateDiff_DatePatterns = [[{pattern}, {replacement}], ...]
 <

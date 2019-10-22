@@ -18,6 +18,7 @@ function! DateDiff#ParseMonth( month )
     throw 'DateDiff: No match'
 endfunction
 
+let s:microsPattern = ',\(\d\{3}\)$'
 function! s:ParseDate( text )
     for [l:datePattern, l:dateReplacement] in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
 	" Don't use matchlist() here to obtain both date and rest in one pass, as it
@@ -33,9 +34,17 @@ function! s:ParseDate( text )
 	let l:rest = strpart(a:text, l:end)
 	try
 	    let l:convertedDateString = substitute(l:dateString, l:datePattern, l:dateReplacement, '')
-	    let l:date = ingo#date#epoch#ConvertTo(l:convertedDateString)
 
-	    if l:date > 0
+	    if l:convertedDateString =~# s:microsPattern
+		let [l:convertedDateString, l:microsString] = matchlist(l:convertedDateString, '^\(.*\)' . s:microsPattern)[1:2]
+		let l:convertedDate = ingo#date#epoch#ConvertTo(l:convertedDateString)
+		let l:date = [l:convertedDate, str2nr(l:microsString)]
+	    else
+		let l:convertedDate = ingo#date#epoch#ConvertTo(l:convertedDateString)
+		let l:date = l:convertedDate
+	    endif
+
+	    if l:convertedDate > 0
 		return [l:date, l:rest]
 	    endif
 	catch /^DateDiff:/
@@ -48,7 +57,7 @@ function! s:CheckValidness( date, source )
     if empty(a:date)
 	call ingo#err#Set('No valid date found in ' . a:source)
 	return 0
-    elseif type(a:date) != type(0)
+    elseif type(a:date) != type(0) && type(a:date) != type([])
 	call ingo#err#Set(printf('Not a valid date from %s: %s', a:source, a:date))
 	return 0
     endif

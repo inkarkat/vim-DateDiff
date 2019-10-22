@@ -14,9 +14,18 @@ function! NotCalledDiffer( date1, date2 )
     call vimtap#Ok(0, 'differ should not have been called')
 endfunction
 
+function! s:MakeDate( date ) abort
+    if type(a:date) == type(0)
+	return a:date
+    elseif type(a:date) == type([])
+	return [ingo#date#epoch#ConvertTo(a:date[0]), a:date[1]]
+    else
+	return ingo#date#epoch#ConvertTo(a:date)
+    endif
+endfunction
 function! DateDiff( date1, date2, command )
-    let g:date1 = (type(a:date1) == type(0) ? a:date1 : ingo#date#epoch#ConvertTo(a:date1))
-    let g:date2 = (type(a:date2) == type(0) ? a:date2 : ingo#date#epoch#ConvertTo(a:date2))
+    let g:date1 = s:MakeDate(a:date1)
+    let g:date2 = s:MakeDate(a:date2)
     let g:description = a:command
 
     silent! execute a:command

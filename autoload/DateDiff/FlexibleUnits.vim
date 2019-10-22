@@ -32,22 +32,45 @@ function! s:CalculateUnit( diff, divisor ) abort
     \       '.' . l:fraction
     \   )
 endfunction
+function! s:ParseDate( date ) abort
+    return (type(a:date) == type([]) ? a:date : [a:date, 0])
+endfunction
+function! s:SecondsToMicros( seconds, micros ) abort
+    return 1000 * a:seconds + a:micros
+endfunction
 function! DateDiff#FlexibleUnits#Diff( date1, date2 ) abort
-    let l:secondsDiff = ingo#compat#abs(a:date2 - a:date1)
-    if l:secondsDiff == 0
+    let [l:seconds1, l:micros1] = s:ParseDate(a:date1)
+    let [l:seconds2, l:micros2] = s:ParseDate(a:date2)
+    if l:seconds1 == l:seconds2 && l:micros1 == l:micros2
 	return 'dates are identical'
     endif
-    let l:daysDiff = (l:secondsDiff + 43200) / 86400
 
     let l:diffInUnits = []
-    call s:AddDiffUnit(l:diffInUnits, l:secondsDiff, 'second')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 60), 'minute')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 3600), 'hour')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 86400), 'day')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 7), 'week')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 30), 'month')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 365), 'year')
-    call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 9131), 'generation')
+
+    " Only combine micros with seconds if we're dealing with small date
+    " differences, else that might overflow.
+    let l:secondsDiff = ingo#compat#abs(l:seconds2 - l:seconds1)
+    if l:secondsDiff <= 3600
+	let l:microsDiff = ingo#compat#abs(s:SecondsToMicros(l:seconds1, l:micros1) - s:SecondsToMicros(l:seconds2, l:micros2))
+
+	if l:micros1 != l:micros2
+	    call s:AddDiffUnit(l:diffInUnits, l:microsDiff, 'milli')
+	endif
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:microsDiff, 1000), 'second')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:microsDiff, 60000), 'minute')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:microsDiff, 3600000), 'hour')
+    else
+	let l:daysDiff = (l:secondsDiff + 43200) / 86400
+
+	call s:AddDiffUnit(l:diffInUnits, l:secondsDiff, 'second')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 60), 'minute')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 3600), 'hour')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 86400), 'day')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 7), 'week')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 30), 'month')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 365), 'year')
+	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 9131), 'generation')
+    endif
 
     return join(l:diffInUnits, ' = ')
 endfunction
