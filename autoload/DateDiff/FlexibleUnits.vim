@@ -38,7 +38,7 @@ endfunction
 function! s:SecondsToMicros( seconds, micros ) abort
     return 1000 * a:seconds + a:micros
 endfunction
-function! DateDiff#FlexibleUnits#Diff( date1, date2 ) abort
+function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
     let [l:seconds1, l:micros1] = s:ParseDate(a:date1)
     let [l:seconds2, l:micros2] = s:ParseDate(a:date2)
     if l:seconds1 == l:seconds2 && l:micros1 == l:micros2

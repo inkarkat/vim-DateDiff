@@ -5,12 +5,12 @@ call vimtest#AddDependency('vim-ingo-library')
 runtime plugin/DateDiff.vim
 
 
-function! AssertionDiffer( date1, date2 )
+function! AssertionDiffer( date1, date2, ... )
     call vimtap#Is(a:date1, g:date1, g:description . ' - first date')
     call vimtap#Is(a:date2, g:date2, g:description . ' - second date')
     return ''
 endfunction
-function! NotCalledDiffer( date1, date2 )
+function! NotCalledDiffer( ... )
     call vimtap#Ok(0, 'differ should not have been called')
 endfunction
 

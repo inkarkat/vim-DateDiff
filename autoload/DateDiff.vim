@@ -63,7 +63,7 @@ function! s:CheckValidness( date, source )
     endif
     return 1
 endfunction
-function! DateDiff#Command( Differ, isRangeGiven, startLnum, endLnum, arguments )
+function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, arguments )
     let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
     let [l:now, l:source1, l:source2] = [str2nr(ingo#date#epoch#Now()), 'arguments', 'arguments']
     if a:isRangeGiven
@@ -107,7 +107,7 @@ function! DateDiff#Command( Differ, isRangeGiven, startLnum, endLnum, arguments 
 	let l:date2 = l:now
     endif
 
-    let l:dateDiff = call(a:Differ, [l:date1, l:date2])
+    let l:dateDiff = call(a:Differ, [l:date1, l:date2, a:unit])
     echomsg l:dateDiff
     return 1
 endfunction
