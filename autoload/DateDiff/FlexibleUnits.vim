@@ -78,6 +78,14 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
 	return get(l:diffInUnits, 0, '')
     elseif a:unit ==# '>'
 	return get(l:diffInUnits, -1, '')
+    elseif a:unit ==# '='
+	" Choose the largest one that is not just a fraction; i.e. does not
+	" start with 0.
+	let l:offset = 1
+	while get(l:diffInUnits, -1 * l:offset, '') =~# '^0' && len(l:diffInUnits) > l:offset
+	    let l:offset += 1
+	endwhile
+	return get(l:diffInUnits, -1 * l:offset, '')
     else
 	throw 'ASSERT: Invalid unit: ' . string(a:unit)
     endif

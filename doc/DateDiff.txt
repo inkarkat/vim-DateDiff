@@ -50,6 +50,8 @@ USAGE							      *DateDiff-usage*
 			*   all suitable units (i.e. like |:DateDiff|)
 			<   the smallest unit (that has a non-zero value)
 			>   the largest unit (that has a non-zero value)
+			=   the best unit (largest that is not just a
+			    fraction)
 
 EXAMPLE							    *DateDiff-example*
 
