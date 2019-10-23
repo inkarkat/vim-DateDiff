@@ -72,7 +72,15 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
 	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 9131), 'generation')
     endif
 
-    return join(l:diffInUnits, ' = ')
+    if a:unit ==# '*'
+	return join(l:diffInUnits, ' = ')
+    elseif a:unit ==# '<'
+	return get(l:diffInUnits, 0, '')
+    elseif a:unit ==# '>'
+	return get(l:diffInUnits, -1, '')
+    else
+	throw 'ASSERT: Invalid unit: ' . string(a:unit)
+    endif
 endfunction
 
 let &cpo = s:save_cpo

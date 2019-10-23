@@ -1,6 +1,6 @@
 " Test parsing of one line with invalid arguments.
 
-edit dates.txt
+edit ../dates.txt
 
 call vimtest#StartTap()
 call vimtap#Plan(3)

@@ -8,7 +8,7 @@
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 
-function! DateDiff#ParseMonth( month )
+function! DateDiff#ParseMonth( month ) abort
     for l:i in [index(g:DateDiff_ShortMonths, a:month), index(g:DateDiff_LongMonths, a:month)]
 	if l:i != -1
 	    return printf('%02d', l:i + 1)
@@ -19,7 +19,7 @@ function! DateDiff#ParseMonth( month )
 endfunction
 
 let s:microsPattern = ',\(\d\{3}\)$'
-function! s:ParseDate( text )
+function! s:ParseDate( text ) abort
     for [l:datePattern, l:dateReplacement] in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
 	" Don't use matchlist() here to obtain both date and rest in one pass, as it
 	" would require adding capture groups, and we don't want to assume anything
@@ -53,7 +53,7 @@ function! s:ParseDate( text )
     endfor
     return [a:text, '']
 endfunction
-function! s:CheckValidness( date, source )
+function! s:CheckValidness( date, source ) abort
     if empty(a:date)
 	call ingo#err#Set('No valid date found in ' . a:source)
 	return 0
@@ -63,7 +63,7 @@ function! s:CheckValidness( date, source )
     endif
     return 1
 endfunction
-function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, arguments )
+function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
     let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
     let [l:now, l:source1, l:source2] = [str2nr(ingo#date#epoch#Now()), 'arguments', 'arguments']
     if a:isRangeGiven
@@ -110,6 +110,15 @@ function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, argu
     let l:dateDiff = call(a:Differ, [l:date1, l:date2, a:unit])
     echomsg l:dateDiff
     return 1
+endfunction
+function! DateDiff#UnitCommand( Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
+    let l:supportedUnits = split('<>*', '\zs')
+    let l:parse = matchlist(a:arguments, '\C\V\^\(' . join(map(copy(l:supportedUnits), 'escape(v:val, "\\")'), '\|') . '\)\%(\s\+\(\.\*\)\)\?\$')
+    if empty(l:parse)
+	call ingo#err#Set('No valid unit passed; need one of ' . join(l:supportedUnits, ', '))
+	return 0
+    endif
+    return DateDiff#Command(l:parse[1], a:Differ, a:isRangeGiven, a:startLnum, a:endLnum, l:parse[2])
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :

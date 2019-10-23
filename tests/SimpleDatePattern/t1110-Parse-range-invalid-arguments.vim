@@ -1,7 +1,7 @@
 " Test parsing of range with arguments.
 
 let g:DateDiff_Differ = function('NotCalledDiffer')
-edit dates.txt
+edit ../dates.txt
 
 call vimtest#StartTap()
 call vimtap#Plan(2)

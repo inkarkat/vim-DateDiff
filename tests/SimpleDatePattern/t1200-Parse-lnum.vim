@@ -1,6 +1,6 @@
 " Test parsing of one line for date.
 
-edit dates.txt
+edit ../dates.txt
 
 call vimtest#StartTap()
 call vimtap#Plan(6)
