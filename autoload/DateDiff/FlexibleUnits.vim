@@ -10,10 +10,17 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:CalculateUnit( diff, divisor, unit, ...) abort
-    let l:renderedDiffValue = substitute(printf('%f', (a:divisor == 1 ? a:diff : 1.0 * a:diff / a:divisor)), '\.\?0\+$', '', '')
-    return printf('%s%s %s%s', l:renderedDiffValue, (a:0 ? a:1 : ''), a:unit, (l:renderedDiffValue ==# '1' && ! a:0 ? '' : 's'))
-endfunction
+if has('float')
+    function! s:CalculateUnit( diff, divisor, unit, ...) abort
+	let l:renderedDiffValue = substitute(printf('%f', (a:divisor == 1 ? a:diff : 1.0 * a:diff / a:divisor)), '\.\?0\+$', '', '')
+	return printf('%s%s %s%s', l:renderedDiffValue, (a:0 ? a:1 : ''), a:unit, (l:renderedDiffValue ==# '1' && ! a:0 ? '' : 's'))
+    endfunction
+else
+    function! s:CalculateUnit( diff, divisor, unit, ...) abort
+	let l:renderedDiffValue = a:diff / a:divisor
+	return printf('%d%s %s%s', l:renderedDiffValue, (a:0 ? a:1 : ''), a:unit, (l:renderedDiffValue == 1 && ! a:0 ? '' : 's'))
+    endfunction
+endif
 function! s:AddDiffUnit( diffInUnits, renderedDiffValue, unit ) abort
     if a:renderedDiffValue ==# '0' || a:renderedDiffValue =~# '^\d\{5,}'
 	" Skip values that are zero or too large.

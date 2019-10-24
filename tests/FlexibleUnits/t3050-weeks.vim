@@ -1,5 +1,7 @@
 " Test converting a date difference into weeks.
 
+call vimtest#SkipAndQuitIf(! has('float'), 'Need support for +float')
+
 call vimtest#StartTap()
 call vimtap#Plan(9)
 
