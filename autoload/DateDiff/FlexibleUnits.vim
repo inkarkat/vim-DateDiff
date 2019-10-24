@@ -38,7 +38,7 @@ endfunction
 function! s:SecondsToMicros( seconds, micros ) abort
     return 1000 * a:seconds + a:micros
 endfunction
-function! DateDiff#FlexibleUnits#Diff( date1, date2 ) abort
+function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
     let [l:seconds1, l:micros1] = s:ParseDate(a:date1)
     let [l:seconds2, l:micros2] = s:ParseDate(a:date2)
     if l:seconds1 == l:seconds2 && l:micros1 == l:micros2
@@ -72,7 +72,23 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2 ) abort
 	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 9131), 'generation')
     endif
 
-    return join(l:diffInUnits, ' = ')
+    if a:unit ==# '*'
+	return join(l:diffInUnits, ' = ')
+    elseif a:unit ==# '<'
+	return get(l:diffInUnits, 0, '')
+    elseif a:unit ==# '>'
+	return get(l:diffInUnits, -1, '')
+    elseif a:unit ==# '='
+	" Choose the largest one that is not just a fraction; i.e. does not
+	" start with 0.
+	let l:offset = 1
+	while get(l:diffInUnits, -1 * l:offset, '') =~# '^0' && len(l:diffInUnits) > l:offset
+	    let l:offset += 1
+	endwhile
+	return get(l:diffInUnits, -1 * l:offset, '')
+    else
+	throw 'ASSERT: Invalid unit: ' . string(a:unit)
+    endif
 endfunction
 
 let &cpo = s:save_cpo

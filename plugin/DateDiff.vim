@@ -56,6 +56,7 @@ endif
 
 "- commands --------------------------------------------------------------------
 
-command! -range=-1 -nargs=* DateDiff if ! DateDiff#Command(g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=* DateDiff     if ! DateDiff#Command('*', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=+ DateDiffUnit if ! DateDiff#UnitCommand(g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :

@@ -43,6 +43,15 @@ USAGE							      *DateDiff-usage*
 :{lnum}DateDiff [[{text}]{date}[{text}]]
 			Parse {lnum} for a date / timestamp, calculate the
 			difference to {date} / now, and print it.
+							       *:DateDiffUnit*
+:[...]DateDiffUnit {unit} [...]
+			Like above, but print the date difference only in the
+			passed {unit}, which can be one of:
+			*   all suitable units (i.e. like |:DateDiff|)
+			<   the smallest unit (that has a non-zero value)
+			>   the largest unit (that has a non-zero value)
+			=   the best unit (largest that is not just a
+			    fraction)
 
 EXAMPLE							    *DateDiff-example*
 
