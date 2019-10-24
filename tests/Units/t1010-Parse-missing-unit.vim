@@ -7,7 +7,7 @@ call vimtap#Plan(7)
 
 call vimtap#err#ErrorsLike('^E471:', 'DateDiffUnit', 'no range, no arguments')
 
-let s:errorMessage = 'No valid unit passed; need one of *, <, >, ='
+let s:errorMessage = 'No valid unit passed; need one of *, all, <, smallest, >, largest, =, best'
 call vimtap#err#Errors(s:errorMessage, 'DateDiffUnit 2018-10-17 2018-10-18', 'no unit, two date arguments')
 call vimtap#err#Errors(s:errorMessage, 'DateDiffUnit 2018-10-17 2018-10-18 2018-10-19', 'no unit, three date arguments')
 call vimtap#err#Errors(s:errorMessage, 'DateDiffUnit doesNotExist', 'no unit, bad argument')

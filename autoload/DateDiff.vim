@@ -112,7 +112,7 @@ function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, argu
     return 1
 endfunction
 function! DateDiff#UnitCommand( Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
-    let l:supportedUnits = split('*<>=', '\zs')
+    let l:supportedUnits = ['*', 'all', '<', 'smallest', '>', 'largest', '=', 'best']
     let l:parse = matchlist(a:arguments, '\C\V\^\(' . join(map(copy(l:supportedUnits), 'escape(v:val, "\\")'), '\|') . '\)\%(\s\+\(\.\*\)\)\?\$')
     if empty(l:parse)
 	call ingo#err#Set('No valid unit passed; need one of ' . join(l:supportedUnits, ', '))

@@ -72,13 +72,13 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
 	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 9131), 'generation')
     endif
 
-    if a:unit ==# '*'
+    if a:unit ==# '*' || a:unit ==# 'all'
 	return join(l:diffInUnits, ' = ')
-    elseif a:unit ==# '<'
+    elseif a:unit ==# '<' || a:unit ==# 'smallest'
 	return get(l:diffInUnits, 0, '')
-    elseif a:unit ==# '>'
+    elseif a:unit ==# '>' || a:unit ==# 'largest'
 	return get(l:diffInUnits, -1, '')
-    elseif a:unit ==# '='
+    elseif a:unit ==# '=' || a:unit ==# 'best'
 	" Choose the largest one that is not just a fraction; i.e. does not
 	" start with 0.
 	let l:offset = 1
