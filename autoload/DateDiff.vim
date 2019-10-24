@@ -111,11 +111,12 @@ function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, argu
     echomsg l:dateDiff
     return 1
 endfunction
+let g:DateDiff#DateUnits = ['ms', 'millis', 's', 'seconds', 'min', 'minutes', 'h', 'hours', 'd', 'days', 'w', 'weeks', 'm', 'months', 'y', 'years', 'g', 'generations']
+let g:DateDiff#AllUnits = ['*', 'all', '<', 'smallest', '>', 'largest', '=', 'best'] + g:DateDiff#DateUnits
 function! DateDiff#UnitCommand( Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
-    let l:supportedUnits = ['*', 'all', '<', 'smallest', '>', 'largest', '=', 'best']
-    let l:parse = matchlist(a:arguments, '\C\V\^\(' . join(map(copy(l:supportedUnits), 'escape(v:val, "\\")'), '\|') . '\)\%(\s\+\(\.\*\)\)\?\$')
+    let l:parse = matchlist(a:arguments, '\C\V\^\(' . join(map(copy(g:DateDiff#AllUnits), 'escape(v:val, "\\")'), '\|') . '\)\%(\s\+\(\.\*\)\)\?\$')
     if empty(l:parse)
-	call ingo#err#Set('No valid unit passed; need one of ' . join(l:supportedUnits, ', '))
+	call ingo#err#Set('No valid unit passed; need one of ' . join(g:DateDiff#AllUnits, ', '))
 	return 0
     endif
     return DateDiff#Command(l:parse[1], a:Differ, a:isRangeGiven, a:startLnum, a:endLnum, l:parse[2])

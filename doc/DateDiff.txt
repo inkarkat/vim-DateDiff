@@ -52,6 +52,15 @@ USAGE							      *DateDiff-usage*
 			>, largest  the largest unit (that has non-zero value)
 			=, best	    the best unit (largest that is not just a
 				    fraction)
+			ms, millis  the corresponding unit
+			s, seconds
+			m, minutes
+			h, hours
+			d, days
+			w, weeks
+			m, months
+			y, years
+			g, generations
 
 EXAMPLE							    *DateDiff-example*
 
