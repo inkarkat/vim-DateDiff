@@ -47,11 +47,20 @@ USAGE							      *DateDiff-usage*
 :[...]DateDiffUnit {unit} [...]
 			Like above, but print the date difference only in the
 			passed {unit}, which can be one of:
-			*   all suitable units (i.e. like |:DateDiff|)
-			<   the smallest unit (that has a non-zero value)
-			>   the largest unit (that has a non-zero value)
-			=   the best unit (largest that is not just a
-			    fraction)
+			*, all	    all suitable units (i.e. like |:DateDiff|)
+			<, smallest the smallest unit (that has non-zero value)
+			>, largest  the largest unit (that has non-zero value)
+			=, best	    the best unit (largest that is not just a
+				    fraction)
+			ms, millis  the corresponding unit
+			s, seconds
+			m, minutes
+			h, hours
+			d, days
+			w, weeks
+			m, months
+			y, years
+			g, generations
 
 EXAMPLE							    *DateDiff-example*
 

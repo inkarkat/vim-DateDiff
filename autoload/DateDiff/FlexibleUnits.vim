@@ -10,6 +10,17 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+if has('float')
+    function! s:CalculateUnit( diff, divisor, unit, ...) abort
+	let l:renderedDiffValue = substitute(printf('%f', (a:divisor == 1 ? a:diff : 1.0 * a:diff / a:divisor)), '\.\?0\+$', '', '')
+	return printf('%s%s %s%s', l:renderedDiffValue, (a:0 ? a:1 : ''), a:unit, (l:renderedDiffValue ==# '1' && ! a:0 ? '' : 's'))
+    endfunction
+else
+    function! s:CalculateUnit( diff, divisor, unit, ...) abort
+	let l:renderedDiffValue = a:diff / a:divisor
+	return printf('%d%s %s%s', l:renderedDiffValue, (a:0 ? a:1 : ''), a:unit, (l:renderedDiffValue == 1 && ! a:0 ? '' : 's'))
+    endfunction
+endif
 function! s:AddDiffUnit( diffInUnits, renderedDiffValue, unit ) abort
     if a:renderedDiffValue ==# '0' || a:renderedDiffValue =~# '^\d\{5,}'
 	" Skip values that are zero or too large.
@@ -18,7 +29,7 @@ function! s:AddDiffUnit( diffInUnits, renderedDiffValue, unit ) abort
 
     call add(a:diffInUnits, printf('%s %s%s', a:renderedDiffValue, a:unit, (a:renderedDiffValue ==# '1' ? '' : 's')))
 endfunction
-function! s:CalculateUnit( diff, divisor ) abort
+function! s:RenderUnit( diff, divisor ) abort
     let l:roundedDiffNumber = ((100 * a:diff / a:divisor) + 5) / 10
     let l:roundedDiffValue = '' . l:roundedDiffNumber
     let [l:integerPart,l:fraction] = [l:roundedDiffValue[0:-2], l:roundedDiffValue[-1:-1]]
@@ -45,6 +56,7 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
 	return 'dates are identical'
     endif
 
+    let l:isFixedUnitDiff = (index(g:DateDiff#DateUnits, a:unit) != -1)
     let l:diffInUnits = []
 
     " Only combine micros with seconds if we're dealing with small date
@@ -53,32 +65,74 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
     if l:secondsDiff <= 3600
 	let l:microsDiff = ingo#compat#abs(s:SecondsToMicros(l:seconds1, l:micros1) - s:SecondsToMicros(l:seconds2, l:micros2))
 
-	if l:micros1 != l:micros2
-	    call s:AddDiffUnit(l:diffInUnits, l:microsDiff, 'milli')
+	if l:isFixedUnitDiff
+	    if a:unit ==# 'ms' || a:unit ==# 'millis'
+		return s:CalculateUnit(l:microsDiff, 1, 'milli')
+	    elseif a:unit ==# 's' || a:unit ==# 'seconds'
+		return s:CalculateUnit(l:microsDiff, 1000, 'second')
+	    elseif a:unit ==# 'min' || a:unit ==# 'minutes'
+		return s:CalculateUnit(l:microsDiff, 60000, 'minute')
+	    elseif a:unit ==# 'h' || a:unit ==# 'hours'
+		return s:CalculateUnit(l:microsDiff, 3600000, 'hour')
+	    elseif a:unit ==# 'd' || a:unit ==# 'days'
+		return s:CalculateUnit(l:microsDiff, 86400000, 'day')
+	    elseif a:unit ==# 'w' || a:unit ==# 'weeks'
+		return s:CalculateUnit(l:microsDiff, 604800000, 'week')
+	    else
+		return '0 ' . (len(a:unit) <= 3 ? g:DateDiff#DateUnits[index(g:DateDiff#DateUnits, a:unit) + 1] : a:unit)
+	    endif
+	else
+	    if l:micros1 != l:micros2
+		call s:AddDiffUnit(l:diffInUnits, l:microsDiff, 'milli')
+	    endif
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:microsDiff, 1000), 'second')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:microsDiff, 60000), 'minute')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:microsDiff, 3600000), 'hour')
 	endif
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:microsDiff, 1000), 'second')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:microsDiff, 60000), 'minute')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:microsDiff, 3600000), 'hour')
     else
 	let l:daysDiff = (l:secondsDiff + 43200) / 86400
 
-	call s:AddDiffUnit(l:diffInUnits, l:secondsDiff, 'second')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 60), 'minute')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 3600), 'hour')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:secondsDiff, 86400), 'day')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 7), 'week')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 30), 'month')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 365), 'year')
-	call s:AddDiffUnit(l:diffInUnits, s:CalculateUnit(l:daysDiff, 9131), 'generation')
+	if l:isFixedUnitDiff
+	    if a:unit ==# 'ms' || a:unit ==# 'millis'
+		return s:CalculateUnit(l:secondsDiff, 1, 'milli', '000')
+	    elseif a:unit ==# 's' || a:unit ==# 'seconds'
+		return s:CalculateUnit(l:secondsDiff, 1, 'second')
+	    elseif a:unit ==# 'min' || a:unit ==# 'minutes'
+		return s:CalculateUnit(l:secondsDiff, 6000, 'minute')
+	    elseif a:unit ==# 'h' || a:unit ==# 'hours'
+		return s:CalculateUnit(l:secondsDiff, 3600, 'hour')
+	    elseif a:unit ==# 'd' || a:unit ==# 'days'
+		return s:CalculateUnit(l:secondsDiff, 86400, 'day')
+	    elseif a:unit ==# 'w' || a:unit ==# 'weeks'
+		return s:CalculateUnit(l:daysDiff, 7, 'week')
+	    elseif a:unit ==# 'm' || a:unit ==# 'months'
+		return s:CalculateUnit(l:daysDiff, 30, 'month')
+	    elseif a:unit ==# 'y' || a:unit ==# 'years'
+		return s:CalculateUnit(l:daysDiff, 365, 'year')
+	    elseif a:unit ==# 'g' || a:unit ==# 'generations'
+		return s:CalculateUnit(l:daysDiff, 9131, 'generation')
+	    else
+		throw 'ASSERT: Missed unit: ' . string(a:unit)
+	    endif
+	else
+	    call s:AddDiffUnit(l:diffInUnits, l:secondsDiff, 'second')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:secondsDiff, 60), 'minute')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:secondsDiff, 3600), 'hour')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:secondsDiff, 86400), 'day')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:daysDiff, 7), 'week')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:daysDiff, 30), 'month')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:daysDiff, 365), 'year')
+	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:daysDiff, 9131), 'generation')
+	endif
     endif
 
-    if a:unit ==# '*'
+    if a:unit ==# '*' || a:unit ==# 'all'
 	return join(l:diffInUnits, ' = ')
-    elseif a:unit ==# '<'
+    elseif a:unit ==# '<' || a:unit ==# 'smallest'
 	return get(l:diffInUnits, 0, '')
-    elseif a:unit ==# '>'
+    elseif a:unit ==# '>' || a:unit ==# 'largest'
 	return get(l:diffInUnits, -1, '')
-    elseif a:unit ==# '='
+    elseif a:unit ==# '=' || a:unit ==# 'best'
 	" Choose the largest one that is not just a fraction; i.e. does not
 	" start with 0.
 	let l:offset = 1
