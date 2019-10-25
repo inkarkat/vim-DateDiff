@@ -6,7 +6,6 @@ description			|DateDiff-description|
 usage				|DateDiff-usage|
 installation			|DateDiff-installation|
 configuration			|DateDiff-configuration|
-integration			|DateDiff-integration|
 limitations			|DateDiff-limitations|
 known problems			|DateDiff-known-problems|
 todo				|DateDiff-todo|
@@ -15,9 +14,28 @@ history				|DateDiff-history|
 ==============================================================================
 DESCRIPTION						*DateDiff-description*
 
-This plugin ...
+Dates are everywhere. As timestamps in logfiles, in the prompts of a captured
+shell session, or in the email reply from Fred where he tells you he's on
+vacation from Oct 25, 2019 to Nov 11, 2019. Often, you're interested in how
+much time lies between two dates; calculating that is tedious, pasting the
+dates into another application has the added complication that the used format
+must be understood. How great would it be if Vim could automatically parse
+various common date formats and tell you the difference?!
+
+This plugin provides |:DateDiff| and |:TimeDiff| commands that parse dates /
+times, either from provided argument(s), a passed {range}, or a combination.
+The difference of those two points in time is then printed in time units that
+fit the range (or are passed, if the :...Unit variants are used):
+
+    :DateDiff from Oct 25, 2019 to Nov 11, 2019 ~
+    409 hours = 17 days = 2.4 weeks = 0.6 months ~
 
 HOW IT WORKS								     *
+
+The recognized date and time patterns are configured as part of the plugin,
+and this allows some massaging to recognize non-standard formats.
+Unfortunately, Vim does not have a built-in function to parse dates into the
+epoch, so an external "date" tool is required.
 
 SOURCE									     *
 (Original Vim tip, Stack Overflow answer, ...)
@@ -114,12 +132,6 @@ append microseconds as ,µµµ. If no conversion is necessary, the replacement
 In order to convert month names into numbers (January = 1, ...), two Lists of
 months are used. These can be modified to match localized month names.
 
-
-							      *DateDiff-remap*
-plugmap
-==============================================================================
-INTEGRATION						*DateDiff-integration*
-
 ==============================================================================
 LIMITATIONS						*DateDiff-limitations*
 
@@ -139,6 +151,9 @@ HISTORY							    *DateDiff-history*
 
 GOAL
 First published version.
+
+0.10	25-Oct-2019
+(Finally) finished initial implementation.
 
 0.01	03-Oct-2018
 Started development.
