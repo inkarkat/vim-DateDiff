@@ -13,6 +13,8 @@ if exists('g:loaded_DateDiff') || (v:version < 700)
     finish
 endif
 let g:loaded_DateDiff = 1
+let s:save_cpo = &cpo
+set cpo&vim
 
 "- configuration ---------------------------------------------------------------
 
@@ -64,9 +66,17 @@ endif
 
 "- commands --------------------------------------------------------------------
 
-command! -range=-1 -nargs=* DateDiff     if ! DateDiff#Command('*', 'DateDiff_DatePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
-command! -range=-1 -nargs=* TimeDiff     if ! DateDiff#Command('*', 'DateDiff_TimePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
-command! -range=-1 -nargs=+ DateDiffUnit if ! DateDiff#UnitCommand( 'DateDiff_DatePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
-command! -range=-1 -nargs=+ TimeDiffUnit if ! DateDiff#UnitCommand( 'DateDiff_TimePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=* DateDiff
+\ if ! DateDiff#Command('*', 'DateDiff_DatePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=* TimeDiff
+\ if ! DateDiff#Command('*', 'DateDiff_TimePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
 
+call ingo#plugin#cmdcomplete#MakeFirstArgumentFixedListCompleteFunc(g:DateDiff#AllUnits, '', 'DateDiffUnitComplete')
+command! -range=-1 -nargs=+ -complete=customlist,DateDiffUnitComplete DateDiffUnit
+\ if ! DateDiff#UnitCommand( 'DateDiff_DatePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=+ -complete=customlist,DateDiffUnitComplete TimeDiffUnit
+\ if ! DateDiff#UnitCommand( 'DateDiff_TimePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :
