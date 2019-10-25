@@ -48,6 +48,14 @@ if ! exists('g:DateDiff_DatePatterns')
     \]
     unlet s:monthsExpr
 endif
+if ! exists('g:DateDiff_TimePatterns')
+    let g:DateDiff_TimePatterns = [
+    \   ['\<\([012]\d\)\([0-5]\d\)\([0-5]\d\)\(,\d\{3}\)\?\>', '\1:\2:\3\4'],
+    \   ['\<\([012]\d\)\([0-5]\d\)\>', '\1:\2:00'],
+    \   ['\<[012]\d:[0-5]\d:[0-5]\d\(,\d\{3}\)\?\>', '&'],
+    \   ['\<[012]\d:[0-5]\d\>', '&:00']
+    \]
+endif
 
 if ! exists('g:DateDiff_Differ')
     if v:version < 702 | runtime autoload/FlexibleUnits/DateDiff.vim | endif  " The Funcref doesn't trigger the autoload in older Vim versions.
@@ -56,7 +64,9 @@ endif
 
 "- commands --------------------------------------------------------------------
 
-command! -range=-1 -nargs=* DateDiff     if ! DateDiff#Command('*', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
-command! -range=-1 -nargs=+ DateDiffUnit if ! DateDiff#UnitCommand(g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=* DateDiff     if ! DateDiff#Command('*', 'DateDiff_DatePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=* TimeDiff     if ! DateDiff#Command('*', 'DateDiff_TimePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=+ DateDiffUnit if ! DateDiff#UnitCommand( 'DateDiff_DatePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
+command! -range=-1 -nargs=+ TimeDiffUnit if ! DateDiff#UnitCommand( 'DateDiff_TimePatterns', g:DateDiff_Differ, (<count> != -1), <line1>, <line2>, <q-args>) | echoerr ingo#err#Get() | endif
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :

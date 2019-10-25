@@ -19,8 +19,8 @@ function! DateDiff#ParseMonth( month ) abort
 endfunction
 
 let s:microsPattern = ',\(\d\{3}\)$'
-function! s:ParseDate( text ) abort
-    for [l:datePattern, l:dateReplacement] in ingo#plugin#setting#GetBufferLocal('DateDiff_DatePatterns')
+function! s:ParseDate( patternsVarname, text ) abort
+    for [l:datePattern, l:dateReplacement] in ingo#plugin#setting#GetBufferLocal(a:patternsVarname)
 	" Don't use matchlist() here to obtain both date and rest in one pass, as it
 	" would require adding capture groups, and we don't want to assume anything
 	" about the configured (possibly already quite complex) regular expression.
@@ -63,18 +63,18 @@ function! s:CheckValidness( date, source ) abort
     endif
     return 1
 endfunction
-function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
+function! DateDiff#Command( unit, patternsVarname, Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
     let [l:startLnum, l:endLnum] = [ingo#range#NetStart(a:startLnum), ingo#range#NetEnd(a:endLnum)]
     let [l:now, l:source1, l:source2] = [str2nr(ingo#date#epoch#Now()), 'arguments', 'arguments']
     if a:isRangeGiven
-	let [l:date1, l:source1] = [s:ParseDate(getline(l:startLnum))[0], 'line ' . l:startLnum]
+	let [l:date1, l:source1] = [s:ParseDate(a:patternsVarname, getline(l:startLnum))[0], 'line ' . l:startLnum]
 	if l:startLnum == l:endLnum
 	    if ! empty(a:arguments)
-		let [l:date2, l:rest] = s:ParseDate(a:arguments)
+		let [l:date2, l:rest] = s:ParseDate(a:patternsVarname, a:arguments)
 		if ! s:CheckValidness(l:date2, l:source2)
 		    return 0
 		elseif ! empty(l:rest)
-		    let [l:date3, l:rest] = s:ParseDate(l:rest)
+		    let [l:date3, l:rest] = s:ParseDate(a:patternsVarname, l:rest)
 		    if s:CheckValidness(l:date3, '')
 			call ingo#err#Set('Must pass only one {date}')
 			return 0
@@ -82,17 +82,17 @@ function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, argu
 		endif
 	    endif
 	elseif empty(a:arguments)
-	    let [l:date2, l:source2] = [s:ParseDate(getline(l:endLnum))[0], 'line ' . l:endLnum]
+	    let [l:date2, l:source2] = [s:ParseDate(a:patternsVarname, getline(l:endLnum))[0], 'line ' . l:endLnum]
 	else
 	    call ingo#err#Set('Cannot pass {date} when range is given')
 	    return 0
 	endif
     else
-	let [l:date1, l:rest] = s:ParseDate(a:arguments)
+	let [l:date1, l:rest] = s:ParseDate(a:patternsVarname, a:arguments)
 	if ! empty(l:rest)
-	    let [l:date2, l:rest] = s:ParseDate(l:rest)
+	    let [l:date2, l:rest] = s:ParseDate(a:patternsVarname, l:rest)
 	    if ! empty(l:rest)
-		let [l:date3, l:rest] = s:ParseDate(l:rest)
+		let [l:date3, l:rest] = s:ParseDate(a:patternsVarname, l:rest)
 		if s:CheckValidness(l:date3, '')
 		    call ingo#err#Set('Must pass only two {date}s')
 		    return 0
@@ -113,13 +113,13 @@ function! DateDiff#Command( unit, Differ, isRangeGiven, startLnum, endLnum, argu
 endfunction
 let g:DateDiff#DateUnits = ['ms', 'millis', 's', 'seconds', 'min', 'minutes', 'h', 'hours', 'd', 'days', 'w', 'weeks', 'm', 'months', 'y', 'years', 'g', 'generations']
 let g:DateDiff#AllUnits = ['*', 'all', '<', 'smallest', '>', 'largest', '=', 'best'] + g:DateDiff#DateUnits
-function! DateDiff#UnitCommand( Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
+function! DateDiff#UnitCommand( patternsVarname, Differ, isRangeGiven, startLnum, endLnum, arguments ) abort
     let l:parse = matchlist(a:arguments, '\C\V\^\(' . join(map(copy(g:DateDiff#AllUnits), 'escape(v:val, "\\")'), '\|') . '\)\%(\s\+\(\.\*\)\)\?\$')
     if empty(l:parse)
 	call ingo#err#Set('No valid unit passed; need one of ' . join(g:DateDiff#AllUnits, ', '))
 	return 0
     endif
-    return DateDiff#Command(l:parse[1], a:Differ, a:isRangeGiven, a:startLnum, a:endLnum, l:parse[2])
+    return DateDiff#Command(l:parse[1], a:patternsVarname, a:Differ, a:isRangeGiven, a:startLnum, a:endLnum, l:parse[2])
 endfunction
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :

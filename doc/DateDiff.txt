@@ -54,13 +54,21 @@ USAGE							      *DateDiff-usage*
 				    fraction)
 			ms, millis  the corresponding unit
 			s, seconds
-			m, minutes
+			min, minutes Note that the abbreviation is min, not m!
 			h, hours
 			d, days
 			w, weeks
 			m, months
 			y, years
 			g, generations
+
+						   *:TimeDiff* *:TimeDiffUnit*
+:[...]TimeDiff [...]
+:[...]TimeDiffUnit {unit} [...]
+			Calculate the difference between {time} and {time2} /
+			the current time, and print it ...
+			Exactly like |:DateDiff|, but only parses times (e.g.
+			09:59 or 112231,456).
 
 EXAMPLE							    *DateDiff-example*
 
@@ -91,14 +99,15 @@ CONFIGURATION					      *DateDiff-configuration*
 
 For a permanent configuration, put the following commands into your |vimrc|:
 			   *b:DateDiff_DatePatterns* *g:DateDiff_DatePatterns*
+			   *b:DateDiff_TimePatterns* *g:DateDiff_TimePatterns*
 The recognized date / time patterns are configured in a List of pairs; the
-first is the regular expression to match the date, the second a replacement
-that allows to reshuffle or convert the date into a format that is understood
-by the system's date command (which is used to convert the date into the
-count of seconds after the epoch; i.e. since 01-Jan-1970). A good format is
-YYYY-mm-dd HH:MM:SS. If you have higher-precision times, you can append
-microseconds as ,µµµ. If no conversion is necessary, the replacement '&' uses
-the match as-is. >
+first is the regular expression to match the date / time, the second a
+replacement that allows to reshuffle or convert the date into a format that is
+understood by the system's date command (which is used to convert the date
+into the count of seconds after the epoch; i.e. since 01-Jan-1970). A good
+format is YYYY-mm-dd HH:MM:SS. If you have higher-precision times, you can
+append microseconds as ,µµµ. If no conversion is necessary, the replacement
+'&' uses the match as-is. >
     let g:DateDiff_DatePatterns = [[{pattern}, {replacement}], ...]
 <
 			      *g:DateDiff_ShortMonths* *g:DateDiff_LongMonths*
