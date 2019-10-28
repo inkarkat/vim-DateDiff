@@ -13,7 +13,7 @@ call vimtap#Is(Differ(9999), '0 weeks', '9999 seconds')
 let g:unit = 'weeks'
 call vimtap#Is(Differ(172800), '0.285714 weeks', '172800 seconds')
 call vimtap#Is(Differ(2000000), '3.285714 weeks', '2000000 seconds')
-call vimtap#Is(Differ(10000000000), '16534.428571 weeks', '10000000000 seconds')
+call vimtap#Is(Differ(10000000000), Num64('16534.428571 weeks'), '10000000000 seconds')
 call vimtap#Is(Differ([0, 1]), '0 weeks', '1 milli')
 call vimtap#Is(Differ([9, 999]), '0.000017 weeks', '9999 seconds')
 

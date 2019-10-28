@@ -18,18 +18,29 @@ if has('float') && ! exists('g:DateDiff#NoFloat')
 else
     function! s:CalculateUnit( diff, divisor, unit, ...) abort
 	let l:renderedDiffValue = s:RenderUnit(a:diff, a:divisor)
+	if empty(l:renderedDiffValue)
+	    return ''
+	endif
 	return printf('%s%s %s%s', l:renderedDiffValue, (a:0 ? a:1 : ''), a:unit, (l:renderedDiffValue ==# '1' && ! a:0 ? '' : 's'))
     endfunction
 endif
 function! s:AddDiffUnit( diffInUnits, renderedDiffValue, unit ) abort
-    if a:renderedDiffValue ==# '0' || a:renderedDiffValue =~# '^\d\{5,}'
+    if empty(a:renderedDiffValue) || a:renderedDiffValue ==# '0' || a:renderedDiffValue =~# '^\d\{5,}'
 	" Skip values that are zero or too large.
 	return
     endif
 
     call add(a:diffInUnits, printf('%s %s%s', a:renderedDiffValue, a:unit, (a:renderedDiffValue ==# '1' ? '' : 's')))
 endfunction
+let s:MAX_DIFF = (has('num64') ? 0x7FFFFFFFFFFFFFFF : 0x7FFFFFFF) / 100
+function! s:IsOverflow( diff ) abort
+    return (a:diff > s:MAX_DIFF)
+endfunction
 function! s:RenderUnit( diff, divisor ) abort
+    if s:IsOverflow(a:diff)
+	return ''
+    endif
+
     let l:roundedDiffNumber = ((100 * a:diff / a:divisor) + 5) / 10
     let l:roundedDiffValue = '' . l:roundedDiffNumber
     let [l:integerPart,l:fraction] = [l:roundedDiffValue[0:-2], l:roundedDiffValue[-1:-1]]
@@ -89,7 +100,7 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
 	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:microsDiff, 60000), 'minute')
 	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:microsDiff, 3600000), 'hour')
 	endif
-    else
+    elseif ! s:IsOverflow(l:secondsDiff + 43200)
 	let l:daysDiff = (l:secondsDiff + 43200) / 86400
 
 	if l:isFixedUnitDiff
@@ -124,6 +135,8 @@ function! DateDiff#FlexibleUnits#Diff( date1, date2, unit ) abort
 	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:daysDiff, 365), 'year')
 	    call s:AddDiffUnit(l:diffInUnits, s:RenderUnit(l:daysDiff, 9131), 'generation')
 	endif
+    else
+	return ''
     endif
 
     if a:unit ==# '*' || a:unit ==# 'all'

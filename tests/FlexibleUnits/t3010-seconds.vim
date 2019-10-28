@@ -11,7 +11,7 @@ call vimtap#Is(Differ(9999), '9999 seconds', '9999 seconds')
 let g:unit = 'seconds'
 call vimtap#Is(Differ(172800), '172800 seconds', '172800 seconds')
 call vimtap#Is(Differ(2000000), '2000000 seconds', '2000000 seconds')
-call vimtap#Is(Differ(10000000000), '10000000000 seconds', '10000000000 seconds')
+call vimtap#Is(Differ(10000000000), Num64('10000000000 seconds'), '10000000000 seconds')
 call vimtap#Is(Differ([0, 1]), '0.001 seconds', '1 milli')
 call vimtap#Is(Differ([9, 999]), '9.999 seconds', '9999 seconds')
 

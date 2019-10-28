@@ -18,10 +18,10 @@ call vimtap#Is(Differ(2000000), '555.6 hours = 23.1 days = 3.3 weeks = 0.8 month
 call vimtap#Is(Differ(3333333), '925.9 hours = 38.6 days = 5.6 weeks = 1.3 months = 0.1 years', '3333333 seconds')
 
 call vimtap#Is(Differ(10000000), '2777 hours = 115.7 days = 16.6 weeks = 3.9 months = 0.3 years', '10000000 seconds')
-call vimtap#Is(Differ(100000000), '1157 days = 165.3 weeks = 38.6 months = 3.2 years = 0.1 generations', '100000000 seconds')
-call vimtap#Is(Differ(1000000000), '1653 weeks = 385.8 months = 31.7 years = 1.3 generations', '1000000000 seconds')
-call vimtap#Is(Differ(10000000000), '3858 months = 317.1 years = 12.7 generations', '10000000000 seconds')
-call vimtap#Is(Differ(100000000000), '3171 years = 126.8 generations', '100000000000 seconds')
-call vimtap#Is(Differ(1000000000000), '1267 generations', '1000000000000 seconds')
+call vimtap#Is(Differ(100000000), Num64('1157 days = 165.3 weeks = 38.6 months = 3.2 years = 0.1 generations'), '100000000 seconds')
+call vimtap#Is(Differ(1000000000), Num64('1653 weeks = 385.8 months = 31.7 years = 1.3 generations'), '1000000000 seconds')
+call vimtap#Is(Differ(10000000000), Num64('3858 months = 317.1 years = 12.7 generations'), '10000000000 seconds')
+call vimtap#Is(Differ(100000000000), Num64('3171 years = 126.8 generations'), '100000000000 seconds')
+call vimtap#Is(Differ(1000000000000), Num64('1267 generations'), '1000000000000 seconds')
 
 call vimtest#Quit()

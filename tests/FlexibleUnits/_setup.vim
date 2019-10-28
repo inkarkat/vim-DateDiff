@@ -11,3 +11,13 @@ function! Differ( ... ) abort
     endif
     return call('DateDiff#FlexibleUnits#Diff', l:args)
 endfunction
+
+if has('num64')
+    function! Num64( value ) abort
+	return a:value
+    endfunction
+else
+    function! Num64( value ) abort
+	return ''
+    endfunction
+endif

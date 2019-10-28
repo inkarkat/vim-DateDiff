@@ -13,7 +13,7 @@ call vimtap#Is(Differ(9999), '0 generations', '9999 seconds')
 let g:unit = 'generations'
 call vimtap#Is(Differ(172800), '0.000219 generations', '172800 seconds')
 call vimtap#Is(Differ(2000000), '0.002519 generations', '2000000 seconds')
-call vimtap#Is(Differ(10000000000), '12.675611 generations', '10000000000 seconds')
+call vimtap#Is(Differ(10000000000), Num64('12.675611 generations'), '10000000000 seconds')
 call vimtap#Is(Differ([0, 1]), '0 generations', '1 milli')
 call vimtap#Is(Differ([9, 999]), '0 generations', '9999 seconds')
 
